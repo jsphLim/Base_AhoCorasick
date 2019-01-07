@@ -1,16 +1,16 @@
 package ac
 
-//字典树节点
+//node of Trie Tree
 type Trie_Node struct {
 	fail      *Trie_Node
 	next      map[rune]*Trie_Node
 	isPattern bool
 }
-//ahoCorasick类
+//ahoCorasick 
 type AhoCorasick struct {
 	root *Trie_Node
 }
-//new 一个字典树节点
+//new a node
 func newNode() *Trie_Node {
 	return &Trie_Node{
 		fail:      nil,
@@ -29,7 +29,7 @@ type find struct {
 	Begin,End int
 }
 
-//添加模式串
+//add the pattern string
 func (aho *AhoCorasick) Add(pattern string) {
 	str := []rune(pattern)
 	pointer := aho.root
@@ -43,7 +43,7 @@ func (aho *AhoCorasick) Add(pattern string) {
 }
 
 func (aho *AhoCorasick) BuildAhoCorasick() {
-	//建立队列
+	//set up a queue
 	queue := []*Trie_Node{}
 	queue = append(queue, aho.root)
 	for len(queue) != 0 {
@@ -64,24 +64,24 @@ func (aho *AhoCorasick) BuildAhoCorasick() {
 	}
 }
 
-// 扫描 返回查询结果
+// scan and return the results
 func (ac *AhoCorasick) ScanAhoCorasick(content string) (results []find) {
 	str := []rune(content)
 	pointer := ac.root
-	var begin, end int  //开始位置与结束位置
+	var begin, end int  //the begin and end location
 	for i, c := range str {
 		_, ok := pointer.next[c]
-		// 失配状态更改
+		//match fail
 		for !ok && pointer != ac.root {
 			pointer = pointer.fail
 		}
 		if _, ok = pointer.next[c]; ok {
-			if pointer == ac.root { // 匹配第一个成功，记录位置
+			if pointer == ac.root { // match the first word and return the loacation
 				begin = i
 			}
 			pointer = pointer.next[c]
 			if pointer.isPattern {
-				end = i // 最后一个匹配成功，记录
+				end = i // match the last word and return the location
 				results = append(results, find{begin, end})
 			}
 		}
